@@ -23,6 +23,7 @@
     "@babel/runtime": "^7.23.6",
     "@expo/config": "^8.5.4",
     "@expo/spawn-async": "^1.7.2",
+    "@google-cloud/storage": "^7.17.3",
     "@react-native/babel-preset": "^0.73.19",
     "aws-sdk": "^2.487.0",
     "babel-loader": "^8.2.5",

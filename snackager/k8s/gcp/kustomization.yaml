@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: default
+resources:
+- ../base
+- external-secret-env.yaml
+configMapGenerator:
+- name: snackager-config
+  behavior: merge
+  envs:
+  - snackager.env
+images:
+- name: us-central1-docker.pkg.dev/exponentjs/snack/snackager
+  newName: us-central1-docker.pkg.dev/bfloat/snackager/snackager
+  newTag: latest
+

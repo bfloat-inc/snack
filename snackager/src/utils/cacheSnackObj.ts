@@ -1,53 +1,41 @@
 import json5 from 'json5';
 
-import config from '../config';
-import { s3, S3 } from '../external/aws';
+import storageClient, { importsBucket } from '../external/storage';
 import logger from '../logger';
 import { GitSnackObj } from '../types';
 
 export async function getCachedObj(filename: string): Promise<GitSnackObj | undefined> {
-  let s3Response: S3.GetObjectOutput;
   try {
-    s3Response = await s3
-      .getObject({
-        Bucket: config.s3.imports_bucket,
-        Key: filename,
-      })
-      .promise();
+    const buffer = await storageClient.getFile(importsBucket, filename);
+    if (!buffer) {
+      return undefined;
+    }
+    return json5.parse(buffer.toString());
   } catch {
-    return;
-  }
-  if (!s3Response.Body) {
     return undefined;
   }
-  return json5.parse(s3Response.Body.toString());
 }
 
 export async function cacheObj(snackObj: GitSnackObj, filename: string): Promise<void> {
   try {
-    await s3
-      .upload({
-        Bucket: config.s3.imports_bucket,
-        Key: filename,
-        Body: json5.stringify(snackObj),
-        ACL: 'public-read',
-        CacheControl: 'public, max-age=31536000',
-      })
-      .promise();
+    const body = Buffer.from(json5.stringify(snackObj));
+    const result = await storageClient.uploadFile(importsBucket, filename, body, {
+      acl: 'public-read',
+      cacheControl: 'public, max-age=31536000',
+    });
+    
+    if (!result) {
+      throw new Error('Failed to upload file');
+    }
   } catch (e) {
-    logger.error({ e, filename, bucket: config.s3.imports_bucket }, 'unable to upload file to s3');
+    logger.error({ e, filename, bucket: importsBucket }, 'unable to upload file to storage');
     throw new Error('CacheObj failure: ' + e.message);
   }
 }
 
 export async function removeFromCache(filename: string): Promise<void> {
   try {
-    await s3
-      .deleteObject({
-        Bucket: config.s3.imports_bucket,
-        Key: filename,
-      })
-      .promise();
+    await storageClient.deleteFile(importsBucket, filename);
   } catch {
     // Ignore error
   }

@@ -6,6 +6,12 @@ export default async function addS3Redirect(
   key: string,
   destination: string,
 ): Promise<S3.PutObjectOutput | undefined> {
+  // Only works with S3 backend
+  if (config.storageBackend !== 's3' || !config.s3) {
+    logger.warn({ key, destination }, 'S3 redirect not supported with current storage backend');
+    return undefined;
+  }
+  
   try {
     return await s3
       .putObject({

@@ -1,0 +1,61 @@
+# Snackager GCP Deployment Configuration Template
+# Copy this file to gcp-config.sh and fill in your values
+# Then run: source gcp-config.sh
+
+# ========================================
+# GCP Configuration
+# ========================================
+
+# Your GCP Project ID (required)
+export GCP_PROJECT_ID="your-project-id"
+
+# GCP Region (default: us-central1)
+export GCP_REGION="us-central1"
+
+# Cluster name (default: snackager-cluster)
+export CLUSTER_NAME="snackager-cluster"
+
+# Redis instance name (default: snackager-redis)
+export REDIS_INSTANCE_NAME="snackager-redis"
+
+# Artifact Registry repository name (default: snackager)
+export ARTIFACT_REGISTRY_REPO="snackager"
+
+# ========================================
+# Storage Configuration (AWS S3)
+# ========================================
+# Note: You can use AWS S3 from GCP, or modify the code to use GCS
+
+# S3 bucket for bundled artifacts (required)
+export S3_BUCKET="your-snackager-artifacts-bucket"
+
+# S3 bucket for git imports (required)
+export IMPORTS_S3_BUCKET="your-snackager-imports-bucket"
+
+# S3 Region (default: us-west-1)
+export S3_REGION="us-west-1"
+
+# AWS Access Key ID (required)
+export AWS_ACCESS_KEY_ID="your-aws-access-key"
+
+# AWS Secret Access Key (required)
+export AWS_SECRET_ACCESS_KEY="your-aws-secret-key"
+
+# ========================================
+# Snackager Configuration
+# ========================================
+
+# Public URL where snackager will be accessible (required)
+# Example: https://snackager.yourdomain.com
+export SNACKAGER_URL="https://snackager.yourdomain.com"
+
+# Expo API server URL (default: https://exp.host)
+export API_SERVER_URL="https://exp.host"
+
+# ========================================
+# Optional: Sentry Error Tracking
+# ========================================
+
+# Sentry DSN for error tracking (optional)
+# export SENTRY_DSN="your-sentry-dsn"
+

@@ -142,17 +142,14 @@ export default async function fetchBundle({
           unavailable.push(platform);
         }
       } else {
-        const url = `https://s3-${config.s3.region}.amazonaws.com/${
-          config.s3.bucket
-        }/${encodeURIComponent(handle)}-${platform}/.done`;
-
-        const response = await fetch(url, {
-          method: 'HEAD',
-          timeout: 10000,
-        });
-        if (response.status !== 200) {
+        const storageClient = require('../external/storage').default;
+        const artifactsBucket = require('../external/storage').artifactsBucket;
+        const key = `${handle}-${platform}/.done`;
+        
+        const fileExists = await storageClient.fileExists(artifactsBucket, key);
+        if (!fileExists) {
           logger.info(
-            { ...logMetadata, platform, status: response.status },
+            { ...logMetadata, platform },
             `is not cached for platform: ${platform}`,
           );
           unavailable.push(platform);
